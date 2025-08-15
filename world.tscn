@@ -1,0 +1,124 @@
+[gd_scene load_steps=11 format=3 uid="uid://e8m2lvb48u4n"]
+
+[ext_resource type="Script" uid="uid://sbgoatiblr00" path="res://player.gd" id="1_f3sb7"]
+[ext_resource type="PackedScene" uid="uid://dimdxb83foyf7" path="res://migong.tscn" id="1_fj7yv"]
+[ext_resource type="Script" uid="uid://c4jvxoih8mmoo" path="res://path_recorder.gd" id="3_tlwt5"]
+[ext_resource type="Script" uid="uid://cn8jdml2upvrh" path="res://path_visualizer.gd" id="4_aqk2v"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fj7yv"]
+radius = 0.4
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_aqk2v"]
+albedo_color = Color(0.878431, 0.254902, 0, 1)
+emission = Color(0.996486, 0.476655, 0, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tlwt5"]
+material = SubResource("ORMMaterial3D_aqk2v")
+radius = 0.4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fj7yv"]
+size = Vector3(9.07, 3.855, 8.155)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tlwt5"]
+emission_enabled = true
+emission = Color(0, 0, 1, 1)
+emission_energy_multiplier = 5.57
+
+[sub_resource type="TextMesh" id="TextMesh_aqk2v"]
+material = SubResource("StandardMaterial3D_tlwt5")
+text = "恭喜通关"
+font_size = 64
+
+[node name="world" type="Node3D"]
+
+[node name="ground" parent="." instance=ExtResource("1_fj7yv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.178253, -0.150187, 0.0494823)
+
+[node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("camera", "path_recorder", "ground", "camera2", "light", "UI_tips", "shuiyin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.3865, 3.14874, -20.902)
+script = ExtResource("1_f3sb7")
+camera = NodePath("rotation_pivot/Camera3D")
+path_recorder = NodePath("path_recorder")
+ground = NodePath("../ground")
+camera2 = NodePath("../Camera3D")
+light = NodePath("../DirectionalLight3D")
+UI_tips = NodePath("../UI/RichTextLabel")
+shuiyin = NodePath("../UI/RichTextLabel2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
+shape = SubResource("CapsuleShape3D_fj7yv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
+mesh = SubResource("CapsuleMesh_tlwt5")
+
+[node name="path_recorder" type="Node3D" parent="player"]
+script = ExtResource("3_tlwt5")
+
+[node name="rotation_pivot" type="Node3D" parent="player"]
+
+[node name="Camera3D" type="Camera3D" parent="player/rotation_pivot"]
+visible = false
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.891192, -0.453515, -0.010046, -0.0212594, 0.0196341, 0.999581, -0.453128, 0.891032, -0.0271392, 0, 10.767, 0)
+light_energy = 0.8
+light_indirect_energy = 0.5
+light_volumetric_fog_energy = 2.0
+shadow_enabled = true
+
+[node name="FinishArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.0583, 1.26869, 20.4947)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FinishArea"]
+shape = SubResource("BoxShape3D_fj7yv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FinishArea"]
+mesh = SubResource("TextMesh_aqk2v")
+
+[node name="path_visualizer" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+script = ExtResource("4_aqk2v")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 35, 0)
+current = true
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI"]
+layout_mode = 0
+offset_right = 1122.0
+offset_bottom = 646.0
+mouse_filter = 1
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "W  A  S   D      进行移动
+[Space/空格]  进行跳跃
+Tab    进入\\退出 [u]俯视角[/u]
+[font size = 2]俯视角状态下滚轮调整视角[/font]
+M       进入全局地图视角
+[长按E] 可沿过往轨迹“回溯”
+点击 U 隐藏此提示"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="UI"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -78.0
+offset_right = 688.0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_constants/shadow_outline_size = 10
+bbcode_enabled = true
+text = "未洛WeiLuo
+github:   [u]https://github.com/WeiLuo114514/Godot-git/[/u]
+百度云盘:[u]https://pan.baidu.com/s/1hPNYMuldf-SKZ_UDmaYwtA[/u]   提取码: mvyn"
